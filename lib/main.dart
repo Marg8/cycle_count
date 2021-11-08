@@ -1,8 +1,19 @@
+import 'bloc/bloc_state.dart';
+import 'bloc/user_bloc.dart';
+import 'module/widgets.dart';
+import 'screen/dashboard.dart';
+import 'screen/login.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'module/estension.dart';
 
+
 void main() {
-  runApp(const MyApp());
+  runApp(MultiBlocProvider(
+    providers: [BlocProvider<UserBloc>(create: (_) => UserBloc())],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -12,39 +23,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: BlocBuilder<UserBloc, BlocState>(
+        builder: (context, state) {
+          if (state is Authenticated) return const DashBoard();
+          return Login(
+            state: state,
+          );
+        },
+      ),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({Key? key, String? title}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: SafeArea(
-        child: Column(
-          children: [
-          Container(
-            height: context.heigth * 0.20,)
-        ],
-       
-      )),
-    );
-  }
-}
