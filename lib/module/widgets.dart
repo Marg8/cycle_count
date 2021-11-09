@@ -1,14 +1,25 @@
+import 'package:flutter/cupertino.dart';
+import 'package:rxdart/rxdart.dart';
+
 import 'estension.dart';
 import 'package:flutter/material.dart';
 
 enum ButtonType { Save, New, Delete, Cancel }
 
-class Label extends StatelessWidget {
+class MBloc<t> {
+  BehaviorSubject<t> _bloc = BehaviorSubject<t>();
+  Stream<t> get stream => _bloc.stream;
+  t get value => _bloc.value;
+
+  void setValue(t val) => _bloc.add(val);
+}
+
+class MLabel extends StatelessWidget {
   final String title;
   final double? fontSize;
   final Color? color;
   final bool bold;
-  const Label(this.title,
+  const MLabel(this.title,
       {Key? key, this.fontSize, this.color, this.bold = false})
       : super(key: key);
 
@@ -24,14 +35,14 @@ class Label extends StatelessWidget {
   }
 }
 
-class Button extends StatelessWidget {
+class MButton extends StatelessWidget {
   final String? title;
   final VoidCallback onTab;
   final Icon? icon;
   final ButtonType? type;
   final Color? color;
   final EdgeInsets? padding;
-  const Button(
+  const MButton(
       {this.title,
       required this.onTab,
       this.icon,
@@ -78,16 +89,16 @@ class Button extends StatelessWidget {
                       ),
                   const SizedBox(width: 5),
                   title != null
-                  ?title!.toLabel()
-                  :type == ButtonType.Save
-                      ? "Save".toLabel()
-                      : type == ButtonType.Cancel
-                          ? "Cancel".toLabel()
-                          : type == ButtonType.Delete
-                              ? "Delete".toLabel()
-                              : type == ButtonType.New
-                                  ? "New".toLabel()
-                                  : "$title".toLabel()
+                      ? title!.toLabel()
+                      : type == ButtonType.Save
+                          ? "Save".toLabel()
+                          : type == ButtonType.Cancel
+                              ? "Cancel".toLabel()
+                              : type == ButtonType.Delete
+                                  ? "Delete".toLabel()
+                                  : type == ButtonType.New
+                                      ? "New".toLabel()
+                                      : "$title".toLabel()
                   // ignore: unnecessary_string_interpolations
                 ],
               )
@@ -104,14 +115,28 @@ class Button extends StatelessWidget {
   }
 }
 
-class Edit extends StatelessWidget {
+class MTextButton extends StatelessWidget {
+  final String title;
+  final VoidCallback onPressed;
+  final Color? color;
+  const MTextButton(
+      {Key? key, required this.title, required this.onPressed, this.color})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(onPressed: onPressed, child: title.toLabel(color: color));
+  }
+}
+
+class MEdit extends StatelessWidget {
   final String hint;
   final Function(String)? onChange;
   final bool autoFocus;
   final bool password;
   final bool notempty;
   final TextEditingController? controller;
-  const Edit(
+  const MEdit(
       {Key? key,
       required this.hint,
       this.autoFocus = false,
@@ -135,10 +160,75 @@ class Edit extends StatelessWidget {
       controller: controller,
       onChanged: onChange,
       validator: (val) {
-        if ((val ?? "").isEmpty && this.notempty) {
+        if ((val ?? "").isEmpty && notempty) {
           return "cannot be empty";
         }
       },
     );
+  }
+}
+
+class MSwitch extends StatelessWidget {
+  final bool value;
+  final Function(bool) onChange;
+  final String? hint;
+  const MSwitch(
+      {Key? key, required this.value, required this.onChange, this.hint})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    MBloc<bool> _value = MBloc<bool>()..setValue(value);
+    return StreamBuilder<bool>(
+      stream: _value.stream,
+      builder: (_, snap) {
+        if (snap.hasData) {
+          return hint != null
+              ? Tooltip(
+                  message: hint!,
+                  child: Switch(
+                    value: snap.data!,
+                    onChanged: (val) {
+                      onChange(val);
+                      _value.setValue(val);
+                    },
+                  ),
+                )
+              : Switch(
+                  value: snap.data!,
+                  onChanged: (val) {
+                    onChange(val);
+                    _value.setValue(val);
+                  },
+                );
+        }
+        return Container();
+      },
+    );
+  }
+}
+
+class MError extends StatelessWidget {
+  final Exception exception;
+  const MError({Key? key,required this.exception}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(25),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+          color: Colors.red, borderRadius: BorderRadius.circular(12)),
+      child: exception.toString().toLabel(color: Colors.white, bold: true),
+    );
+  }
+}
+
+class MWaiting extends StatelessWidget {
+  const MWaiting({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const CupertinoActivityIndicator().center;
   }
 }

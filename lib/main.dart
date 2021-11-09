@@ -1,7 +1,7 @@
 import 'bloc/bloc_state.dart';
 import 'bloc/user_bloc.dart';
 import 'module/widgets.dart';
-import 'screen/dashboard.dart';
+import 'screen/DashBoard/dashboard.dart';
 import 'screen/login.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

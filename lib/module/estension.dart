@@ -3,7 +3,7 @@ import 'package:cycle_count/bloc/user_bloc.dart';
 import 'package:provider/src/provider.dart';
 
 import 'widgets.dart';
-import '../screen/dashboard.dart';
+import '../screen/DashBoard/dashboard.dart';
 import 'package:flutter/material.dart';
 
 extension ContextExtencion on BuildContext {
@@ -16,7 +16,7 @@ extension ContextExtencion on BuildContext {
 }
 
 extension StringExtenson on String {
-  Widget toLabel({double? fontsize, Color? color, bool bold = false}) => Label(
+  Widget toLabel({double? fontsize, Color? color, bool bold = false}) => MLabel(
         replaceAll("Exception:", ""),
         bold: bold,
         fontSize: fontsize,
