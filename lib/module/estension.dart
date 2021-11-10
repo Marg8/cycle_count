@@ -8,7 +8,14 @@ import 'package:flutter/material.dart';
 
 extension ContextExtencion on BuildContext {
   double get width => MediaQuery.of(this).size.width;
+
+  double widthResponse(double perc, double min, double max) =>
+      MediaQuery.of(this).size.width * perc < min
+          ? min
+          : MediaQuery.of(this).size.width * perc > max ? max : MediaQuery.of(this).size.width * perc;
+
   double get heigth => MediaQuery.of(this).size.height;
+
   void showForm(Widget child) =>
       Navigator.of(this).push(MaterialPageRoute(builder: (_) => child));
   UserBloc? get userBloc => read<UserBloc>();

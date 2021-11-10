@@ -210,7 +210,7 @@ class MSwitch extends StatelessWidget {
 
 class MError extends StatelessWidget {
   final Exception exception;
-  const MError({Key? key,required this.exception}) : super(key: key);
+  const MError({Key? key, required this.exception}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -230,5 +230,38 @@ class MWaiting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const CupertinoActivityIndicator().center;
+  }
+}
+
+class MSiderBarItems extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final VoidCallback onTap;
+  final int value;
+  final bool selected;
+  const MSiderBarItems(
+      {Key? key,
+      required this.title,
+      required this.icon,
+      required this.onTap,
+      this.value = 0, this.selected = false})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      selected: selected,
+      selectedTileColor: Colors.green.shade100,
+      title: title.toLabel(color: Colors.grey.shade500, fontsize: 15),
+      leading: Icon(icon, size: 15, color: Colors.grey.shade500),
+      trailing: value > 0
+          ? CircleAvatar(
+              backgroundColor: Colors.purple,
+              radius: 10,
+              child: "$value".toLabel(fontsize: 10),
+            )
+          : null,
+      onTap: onTap,
+    );
   }
 }
